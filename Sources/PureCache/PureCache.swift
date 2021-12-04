@@ -40,14 +40,14 @@ public final class PureCache<Key: Hashable & Codable, Value: Codable> {
   /// - parameters:
   ///   - storage: An additional storage, other than the default in memory one. If not provided, the cached values will be destroyed once this instance is deallocated.
   ///   - queue: A queue to run read and write operations on. By default, a new concurrent queue will be generated for this instance.
-  init(storage: Storage? = nil, queue: DispatchQueue = .init(label: "io.github.mrasterisco.PureCache", attributes: .concurrent)) {
+  public init(storage: Storage? = nil, queue: DispatchQueue = .init(label: "io.github.mrasterisco.PureCache", attributes: .concurrent)) {
     self.storage = storage
     self.queue = queue
     readFromStorage()
   }
   
   /// Get the count of keys that are currently stored in the cache.
-  var count: Int {
+  public var count: Int {
     content.keys.count
   }
   
@@ -56,7 +56,7 @@ public final class PureCache<Key: Hashable & Codable, Value: Codable> {
   /// - parameters:
   ///   - key: A key.
   /// - returns: The associated value (if any).
-  func value(forKey key: Key) -> Value? {
+  public func value(forKey key: Key) -> Value? {
     queue.sync {
       content[key]
     }
@@ -67,7 +67,7 @@ public final class PureCache<Key: Hashable & Codable, Value: Codable> {
   /// - parameters:
   ///   - value: A value.
   ///   - key: A key.
-  func setValue(_ value: Value, forKey key: Key) {
+  public func setValue(_ value: Value, forKey key: Key) {
     queue.sync(flags: .barrier) { [weak self] in
       self?.content[key] = value
     }
@@ -78,7 +78,7 @@ public final class PureCache<Key: Hashable & Codable, Value: Codable> {
   ///
   /// - parameters:
   ///   - key: A key.
-  func removeValue(forKey key: Key) {
+  public func removeValue(forKey key: Key) {
     queue.sync(flags: .barrier) { [weak self] in
       _ = self?.content.removeValue(forKey: key)
     }

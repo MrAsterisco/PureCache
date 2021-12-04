@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a title="  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html"> Docs</a> (100% documented)</p>
+        <div class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </div>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html"> Reference</a>
+        <img id="carat" src="img/carat.png" alt=""/>
+          Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/FileStorage.html">FileStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/PureCache.html">PureCache</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/Storage.html">Storage</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <h1 id='purecache' class='heading'>PureCache</h1>
+
+<p><a href="https://swift.org/package-manager">
+  <img src="https://img.shields.io/badge/spm-compatible-brightgreen.svg?style=flat" alt="Swift Package Manager" />
+</a></p>
+
+<p>PureCache is a no frills implementation of a caching system in Swift.
+The main target of this library is to provide a cross-platform implementation that works across all the supported Swift platforms without any additional dependency. In order to maintain that, some principles were defined while implementing this package:</p>
+
+<ul>
+<li>It&rsquo;s simple: <strong>dead simple</strong>. You pass a (<code>Codable</code>) value and its (<code>Codable &amp; Hashable</code>) key and you can rest assured it&rsquo;ll be cached.</li>
+<li>It&rsquo;s thread-safe: you can read and write from any thread (even concurrently) and nothing will break.</li>
+<li>It&rsquo;s fast: the library provides in-memory caching out-of-the-box. It also writes to the disk asynchronously <em>(if disk storage is configured)</em>.</li>
+<li>It&rsquo;s consistent: the API is very similar to <code>NSCache</code>.</li>
+</ul>
+
+<p>Following these principles, some advanced features of other caching mechanisms might never see the light in this library. For example:</p>
+
+<ul>
+<li>There is no support for automatic objects expiration nor the ability to specify the maximum cache capacity.</li>
+<li>The library does not clean objects automatically when the memory pressure is rising.</li>
+</ul>
+
+<p><em>This doesn&rsquo;t mean that these features will never be implemented, it just means that they aren&rsquo;t available right now.</em></p>
+<h2 id='installation' class='heading'>Installation</h2>
+
+<p>PureCache is available through <a href="https://swift.org/package-manager">Swift Package Manager</a>.</p>
+<pre class="highlight plaintext"><code>.package(url: "https://github.com/MrAsterisco/PureCache", from: "&lt;see GitHub releases&gt;")
+</code></pre>
+<h3 id='latest-release' class='heading'>Latest Release</h3>
+
+<p>To find out the latest version, look at the Releases tab of this repository.</p>
+<h2 id='getting-started' class='heading'>Getting Started</h2>
+
+<p>Using PureCache is very simple. First, you need a <code>Codable</code> implementation that is going to be stored in the cache:</p>
+<pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">SomeCodable</span><span class="p">:</span> <span class="kt">Codable</span> <span class="p">{</span>
+  <span class="k">let</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span>
+  <span class="k">let</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Double</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Then, you can create a <code><a href="Classes/PureCache.html">PureCache</a></code> instance by calling the initializer:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">cache</span> <span class="o">=</span> <span class="kt">PureCache</span><span class="o">&lt;</span><span class="kt">UUID</span><span class="p">,</span> <span class="kt">SomeCodable</span><span class="o">&gt;</span><span class="p">()</span>
+</code></pre>
+
+<p>To save a value into the cache, you just call:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">someValue</span> <span class="o">=</span> <span class="kt">SomeCodable</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="s">"ID"</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="mi">25</span><span class="p">)</span>
+<span class="n">cache</span><span class="o">.</span><span class="nf">setValue</span><span class="p">(</span><span class="n">someValue</span><span class="p">,</span> <span class="nv">forKey</span><span class="p">:</span> <span class="n">someValue</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</code></pre>
+
+<p>Removing the value from the cache, it&rsquo;s as easy as calling:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">someKey</span> <span class="o">=</span> <span class="kt">UUID</span><span class="p">()</span>
+<span class="n">cache</span><span class="o">.</span><span class="nf">removeValue</span><span class="p">(</span><span class="nv">forKey</span><span class="p">:</span> <span class="n">someKey</span><span class="p">)</span>
+</code></pre>
+<h2 id='disk-storage' class='heading'>Disk Storage</h2>
+
+<p>A decent caching system should also support storing its values on the disk <em>(looking at you, NSCache)</em>. PureCache provides an implementation called <code><a href="Classes/FileStorage.html">FileStorage</a></code> that manages a Property List file on the disk. You can create an instance as follows:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">storage</span> <span class="o">=</span> <span class="kt">FileStorage</span><span class="p">()</span>
+</code></pre>
+
+<p>This will automatically point to a file in the user&rsquo;s Caches directory, called <code>Cache.db</code>. You can then pass this instance when creating a <code><a href="Classes/PureCache.html">PureCache</a></code>:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">cache</span> <span class="o">=</span> <span class="kt">PureCache</span><span class="o">&lt;</span><span class="kt">UUID</span><span class="p">,</span> <span class="kt">SomeCodable</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">storage</span><span class="p">:</span> <span class="n">storage</span><span class="p">)</span>
+</code></pre>
+<h2 id='advanced-usages' class='heading'>Advanced Usages</h2>
+
+<p>While the most common use cases are covered with the functions shown above, there are some additional perks hidden in this library that, depending on your specific situation, you may find useful.</p>
+<h3 id='custom-storage' class='heading'>Custom Storage</h3>
+
+<p><code><a href="Classes/FileStorage.html">FileStorage</a></code> is an implementation of the <code><a href="Protocols/Storage.html">Storage</a></code> protocol. While you can customize the file location when instantiating it, you might want to provide a completely different way of storing your cached values (such as database, if you&rsquo;re managing large sets of data). You can do so by implementing the <code><a href="Protocols/Storage.html">Storage</a></code> protocol, which only requires you to provide functions to <code>read</code> and <code>write</code> the whole cached content.</p>
+
+<p>You can find further information on the documentation of the <code><a href="Protocols/Storage.html">Storage</a></code> protocol</p>
+<h3 id='custom-queues' class='heading'>Custom Queues</h3>
+
+<p>By default, all read and write operations happen on a specific queue that is generated for every instance of <code><a href="Classes/PureCache.html">PureCache</a></code>. In case your application is already managing multiple queues, you can provide a custom one when instantiating <code><a href="Classes/PureCache.html">PureCache</a></code>, using the <code>queue</code> parameter.</p>
+
+<p>You can find further information on the documentation of the <code><a href="Classes/PureCache.html">PureCache</a></code> class.</p>
+<h3 id='syntax-sugar-for-identifiable-implementations' class='heading'>Syntax-sugar for Identifiable implementations</h3>
+
+<p>If the values you are storing in PureCache conform to <code>Identifiable</code>, you can use an extension method to save values that allows to not specify the key. The <code>id</code> property will be used automatically.</p>
+<h2 id='documentation' class='heading'>Documentation</h2>
+
+<p>All the protocols and classes are fully documented.</p>
+
+<p><em>The autogenerated documentation will be provided here as well soon, but you can already explore it in Xcode</em>.</p>
+<h2 id='compatibility' class='heading'>Compatibility</h2>
+
+<p>PureCache is compatible with <strong>iOS</strong>, <strong>macOS</strong>, <strong>Mac Catalyst</strong>, <strong>watchOS</strong> and <strong>tvOS</strong>.</p>
+
+<p>PureCache targets <strong>iOS 9 or later</strong>, <strong>macOS 10.12 or later</strong>, <strong>Mac Catalyst 13.0 or later</strong>, <strong>watchOS 2 or later</strong> and <strong>tvOS 9 or later</strong>.</p>
+
+<p>PureCache has no external dependencies.</p>
+<h2 id='contributions' class='heading'>Contributions</h2>
+
+<p>All contributions to expand the library are welcome. Fork the repo, make the changes you want, and open a Pull Request. When making changes, you should try to keep in mind the principles that guide this library: if you want to challenge one or more of them, be prepared to argue your case well, as I am trying to <strong>keep PureCache really simple</strong>.</p>
+
+<p>If you make changes to the codebase, I am not enforcing a coding style, but I may ask you to make changes based on how the rest of the library is made.</p>
+<h2 id='status' class='heading'>Status</h2>
+
+<p>This library is under <strong>active development</strong>. It is used in one app in Production.</p>
+
+<p>Even if most of the APIs are pretty straightforward, <strong>they may change in the future</strong>; but you don&rsquo;t have to worry about that, because releases will follow <a href="https://semver.org/">Semantic Versioning 2.0.0</a>.</p>
+<h2 id='license' class='heading'>License</h2>
+
+<p>PureCache is distributed under the MIT license. <a href="https://github.com/MrAsterisco/PureCache/blob/master/LICENSE">See LICENSE</a> for details.</p>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external noopener"></a>. All rights reserved. (Last updated: 2021-12-04)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</html>
